@@ -140,6 +140,7 @@ cc_library(
         ":tf_decode_constant_pass",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_legalize_tf",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_optimize",
+        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tensorflow_passes",
     ],
 )
 
@@ -159,7 +160,7 @@ pybind_extension(
     module_name = "graphdef_tfl_flatbuffer",
     deps = [
         ":lce_tfl_passes",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:flatbuffer_translate_lib",
+        "@org_tensorflow//tensorflow/compiler/mlir/lite:flatbuffer_export",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:convert_graphdef",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:import_utils",

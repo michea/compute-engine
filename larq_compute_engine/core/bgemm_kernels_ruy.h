@@ -2,9 +2,9 @@
 #define COMPUTE_EGNINE_TFLITE_KERNELS_BGEMM_KERNELS_RUY_H_
 
 #include "larq_compute_engine/core/bgemm_functor.h"
-#include "tensorflow/lite/experimental/ruy/platform.h"
-#include "tensorflow/lite/experimental/ruy/profiler/instrumentation.h"
-#include "tensorflow/lite/experimental/ruy/ruy.h"
+#include "ruy/platform.h"
+#include "ruy/profiler/instrumentation.h"
+#include "ruy/ruy.h"
 
 namespace compute_engine {
 namespace tflite {

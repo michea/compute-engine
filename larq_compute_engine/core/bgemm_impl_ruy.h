@@ -3,9 +3,9 @@
 
 #include "bgemm_kernels_common.h"
 #include "bgemm_trmul_params.h"
-#include "tensorflow/lite/experimental/ruy/matrix.h"
-#include "tensorflow/lite/experimental/ruy/platform.h"
-#include "tensorflow/lite/experimental/ruy/profiler/instrumentation.h"
+#include "ruy/matrix.h"
+#include "ruy/platform.h"
+#include "ruy/profiler/instrumentation.h"
 #include "tensorflow/lite/kernels/cpu_backend_context.h"
 #include "tensorflow/lite/kernels/cpu_backend_gemm_params.h"
 

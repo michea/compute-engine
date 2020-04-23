@@ -9,7 +9,7 @@
 
 namespace mlir {
 /// Create a pass to convert from the TFExecutor to the TF control dialect.
-std::unique_ptr<OpPassBase<FuncOp>>
+std::unique_ptr<OperationPass<FuncOp>>
 CreateTFExecutorToControlDialectConversion();
 }  // namespace mlir
 
@@ -47,7 +47,7 @@ void AddTFToLCETFLConversionPasses(mlir::OpPassManager* pass_manager) {
   // the TFLite dialect.
   pass_manager->addPass(mlir::TFL::CreatePrepareTFPass(true));
   pass_manager->addNestedPass<mlir::FuncOp>(mlir::createCanonicalizerPass());
-  pass_manager->addPass(mlir::TFL::CreateLegalizeTFPass());
+  pass_manager->addPass(mlir::TFL::CreateLegalizeTFPass(true));
   pass_manager->addPass(mlir::TFL::CreateOptimizePass());
   pass_manager->addPass(mlir::TFL::CreateOptimizeLCEPass());
   // This pass operates on TensorFlow ops but is triggered after legalization

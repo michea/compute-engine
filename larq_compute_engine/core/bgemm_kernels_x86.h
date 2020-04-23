@@ -1,15 +1,15 @@
 #ifndef COMPUTE_EGNINE_TFLITE_KERNELS_BGEMM_KERNELS_X86_H_
 #define COMPUTE_EGNINE_TFLITE_KERNELS_BGEMM_KERNELS_X86_H_
 
-#include "tensorflow/lite/experimental/ruy/common.h"
-#include "tensorflow/lite/experimental/ruy/internal_matrix.h"
-#include "tensorflow/lite/experimental/ruy/kernel_common.h"
-#include "tensorflow/lite/experimental/ruy/matrix.h"
-#include "tensorflow/lite/experimental/ruy/opt_set.h"
-#include "tensorflow/lite/experimental/ruy/path.h"
-#include "tensorflow/lite/experimental/ruy/platform.h"
-#include "tensorflow/lite/experimental/ruy/spec.h"
-#include "tensorflow/lite/experimental/ruy/tune.h"
+#include "ruy/common.h"
+#include "ruy/internal_matrix.h"
+#include "ruy/kernel_common.h"
+#include "ruy/matrix.h"
+#include "ruy/opt_set.h"
+#include "ruy/path.h"
+#include "ruy/platform.h"
+#include "ruy/spec.h"
+#include "ruy/tune.h"
 
 using namespace ruy;
 

@@ -9,13 +9,13 @@ template <class TOp>
 struct CleanupDeadOps : public OpRewritePattern<TOp> {
   using OpRewritePattern<TOp>::OpRewritePattern;
 
-  PatternMatchResult matchAndRewrite(TOp op,
+  LogicalResult matchAndRewrite(TOp op,
                                      PatternRewriter& rewriter) const override {
     if (op.use_empty()) {
       rewriter.eraseOp(op);
-      return Pattern::matchSuccess();
+      return success();
     }
-    return Pattern::matchFailure();
+    return failure();
   }
 };
 

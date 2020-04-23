@@ -2,11 +2,11 @@
 #define COMPUTE_EGNINE_TFLITE_KERNELS_BGEMM_TRMUL_PARAMS_H_
 
 #include "bgemm_kernels_ruy.h"
-#include "tensorflow/lite/experimental/ruy/dispatch.h"
-#include "tensorflow/lite/experimental/ruy/pack_common.h"
-#include "tensorflow/lite/experimental/ruy/path.h"
-#include "tensorflow/lite/experimental/ruy/spec.h"
-#include "tensorflow/lite/experimental/ruy/trmul_params.h"
+#include "ruy/dispatch.h"
+#include "ruy/pack_common.h"
+#include "ruy/path.h"
+#include "ruy/spec.h"
+#include "ruy/trmul_params.h"
 
 using namespace ruy;
 

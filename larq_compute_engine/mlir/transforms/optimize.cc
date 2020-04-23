@@ -11,7 +11,7 @@ namespace TFL {
 namespace {
 
 // Optimize LCE operations in functions.
-struct OptimizeLCE : public FunctionPass<OptimizeLCE> {
+struct OptimizeLCE : public PassWrapper<OptimizeLCE, FunctionPass> {
   void runOnFunction() override;
 };
 
@@ -65,17 +65,17 @@ void OptimizeLCE::runOnFunction() {
 
   TFL::populateWithGenerated(ctx, &patterns);
   // Cleanup dead ops manually. LCE ops are not registered to the TF dialect so
-  // op->hasNoSideEffect() will return false. Therefor applyPatternsGreedily
-  // won't automatically remove the dead nodes. See
+  // op->hasNoSideEffect() will return false. Therefore
+  // applyPatternsAndFoldGreedily won't automatically remove the dead nodes. See
   // https://github.com/llvm/llvm-project/blob/master/mlir/include/mlir/IR/Operation.h#L457-L462
   patterns.insert<mlir::CleanupDeadOps<TF::LceBconv2dOp>>(ctx);
-  applyPatternsGreedily(func, patterns);
+  applyPatternsAndFoldGreedily(func, patterns);
 }
 
 }  // namespace
 
 // Creates an instance of the TensorFlow dialect OptimizeLCE pass.
-std::unique_ptr<OpPassBase<FuncOp>> CreateOptimizeLCEPass() {
+std::unique_ptr<OperationPass<FuncOp>> CreateOptimizeLCEPass() {
   return std::make_unique<OptimizeLCE>();
 }
 
