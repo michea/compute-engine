@@ -11,12 +11,14 @@
 #include "pybind11/pytypes.h"
 #include "pybind11/stl.h"
 #include "tensorflow/compiler/mlir/lite/flatbuffer_export.h"
+#include "tensorflow/compiler/mlir/lite/quantization/quantization_config.h"
 #include "tensorflow/compiler/mlir/lite/transforms/passes.h"
 #include "tensorflow/compiler/mlir/tensorflow/translate/import_model.h"
 #include "tensorflow/compiler/mlir/tensorflow/translate/mlir_roundtrip_flags.h"
 #include "tensorflow/compiler/mlir/tensorflow/utils/error_util.h"
 #include "tensorflow/compiler/mlir/tensorflow/utils/import_utils.h"
 #include "tensorflow/core/framework/graph.pb.h"
+#include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/protobuf/graph_debug_info.pb.h"
 
 namespace tensorflow {
@@ -26,7 +28,7 @@ pybind11::bytes ConvertGraphDefToTFLiteFlatBuffer(
     const std::vector<string>& input_arrays,
     const std::vector<string>& input_dtypes,
     const std::vector<std::vector<int>>& input_shapes,
-    const std::vector<string>& output_arrays) {
+    const std::vector<string>& output_arrays, const bool& should_quantize) {
   GraphDef graphdef;
   if (!tensorflow::LoadProtoFromBuffer(std::string(graphdef_bytes), &graphdef)
            .ok()) {
@@ -34,7 +36,9 @@ pybind11::bytes ConvertGraphDefToTFLiteFlatBuffer(
   }
 
   GraphImportConfig specs;
+  specs.prune_unused_nodes = true;
   specs.convert_legacy_fed_inputs = true;
+  specs.graph_as_function = false;
   specs.upgrade_legacy = true;
   if (!ParseInputArrayInfo(input_arrays, input_dtypes, input_shapes,
                            &specs.inputs)
@@ -55,11 +59,19 @@ pybind11::bytes ConvertGraphDefToTFLiteFlatBuffer(
     throw std::runtime_error("Could not convert GraphDef.");
   }
 
+  mlir::TFL::QuantizationSpecs quant_specs;
+  if (should_quantize) {
+    quant_specs.inference_type = tensorflow::DT_QINT8;
+    // quant_specs.inference_input_type = tensorflow::DT_QINT8;
+    // quant_specs.input_ranges.push_back({-6.0, 6.0});
+  }
+  // quant_specs.default_ranges = {-6.0, 6.0};
   mlir::PassManager pm(&context);
-  tensorflow::AddTFToLCETFLConversionPasses(&pm);
+  tensorflow::AddTFToLCETFLConversionPasses(quant_specs, &pm);
 
   // Convert back to outlined while format for export back to flatbuffer.
   pm.addPass(mlir::TFL::CreateWhileOutlinePass());
+  pm.addPass(mlir::TFL::CreateRuntimeVerifyPass());
 
   if (failed(pm.run(*module.ValueOrDie()))) {
     throw std::runtime_error("Could not complete conversion passes.");

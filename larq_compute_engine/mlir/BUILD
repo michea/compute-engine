@@ -114,6 +114,7 @@ cc_library(
     deps = [
         ":larq_compute_engine_optimize",
         ":larq_compute_engine_prepare",
+        "@org_tensorflow//tensorflow/compiler/mlir/lite:tf_tfl_passes",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_legalize_tf",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_optimize",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:decode_constant_pass",

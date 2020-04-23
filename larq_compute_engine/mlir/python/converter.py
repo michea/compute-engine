@@ -37,6 +37,20 @@ def concrete_function_from_keras_model(model):
     return func.get_concrete_function()
 
 
+def _contains_training_quant_op(graph_def):
+    """Checks if the graph contains any training-time quantization ops."""
+    training_quant_ops = {
+        "FakeQuantWithMinMaxVars",
+        "FakeQuantWithMinMaxVarsPerChannel",
+        "QuantizeAndDequantizeV2",
+        "QuantizeAndDequantizeV3",
+    }
+
+    return any(
+        op in node_def.name for op in training_quant_ops for node_def in graph_def.node
+    )
+
+
 def convert_keras_model(model: tf.keras.Model) -> bytes:
     """Converts a Keras model to TFLite flatbuffer.
 
@@ -69,15 +83,20 @@ def convert_keras_model(model: tf.keras.Model) -> bytes:
     output_tensors = frozen_func.outputs
 
     graph_def = frozen_func.graph.as_graph_def()
+
     # Run a constant folding using grappler since we currently don't implement
     # folding for LCE custom ops
-    graph_def = run_graph_optimizations(
-        graph_def,
-        input_tensors,
-        output_tensors,
-        config=get_grappler_config(["constfold"]),
-        graph=frozen_func.graph,
-    )
+    # graph_def = run_graph_optimizations(
+    #     graph_def,
+    #     input_tensors,
+    #     output_tensors,
+    #     config=get_grappler_config(["constfold"]),
+    #     graph=frozen_func.graph,
+    # )
+    with open("/tmp/testmodel.pb", "wb") as f:
+        f.write(graph_def.SerializeToString())
+
+    should_quantize = _contains_training_quant_op(graph_def)
 
     # Checks dimensions in input tensor.
     for tensor in input_tensors:
@@ -100,4 +119,5 @@ def convert_keras_model(model: tf.keras.Model) -> bytes:
         [DataType.Name(tensor.dtype.as_datatype_enum) for tensor in input_tensors],
         [tensor.shape.as_list() for tensor in input_tensors],
         [get_tensor_name(tensor) for tensor in output_tensors],
+        should_quantize,
     )
