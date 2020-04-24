@@ -118,3 +118,14 @@ android_configure(name = "local_config_android")
 load("@local_config_android//:android.bzl", "android_workspace")
 
 android_workspace()
+
+# Required for dependency @com_github_grpc_grpc
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+
+load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
+
+bazel_version_repository(name = "bazel_version")

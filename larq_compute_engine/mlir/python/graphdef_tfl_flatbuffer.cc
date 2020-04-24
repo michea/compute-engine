@@ -1,17 +1,21 @@
 #include <exception>
 
-#include "larq_compute_engine/mlir/tf_tfl_passes.h"
+// #include "larq_compute_engine/mlir/tf_tfl_passes.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/ToolOutputFile.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/IR/Module.h"
+#include "mlir/InitAllDialects.h"
+#include "mlir/InitAllPasses.h"
 #include "mlir/Pass/Pass.h"
 #include "mlir/Support/FileUtilities.h"
 #include "pybind11/pybind11.h"
 #include "pybind11/pytypes.h"
 #include "pybind11/stl.h"
+#include "tensorflow/compiler/mlir/lite/common/tfl_pass_config.h"
 #include "tensorflow/compiler/mlir/lite/flatbuffer_export.h"
 #include "tensorflow/compiler/mlir/lite/quantization/quantization_config.h"
+#include "tensorflow/compiler/mlir/lite/tf_tfl_passes.h"
 #include "tensorflow/compiler/mlir/lite/transforms/passes.h"
 #include "tensorflow/compiler/mlir/tensorflow/translate/import_model.h"
 #include "tensorflow/compiler/mlir/tensorflow/translate/mlir_roundtrip_flags.h"
@@ -63,11 +67,15 @@ pybind11::bytes ConvertGraphDefToTFLiteFlatBuffer(
   if (should_quantize) {
     quant_specs.inference_type = tensorflow::DT_QINT8;
     // quant_specs.inference_input_type = tensorflow::DT_QINT8;
-    // quant_specs.input_ranges.push_back({-6.0, 6.0});
+    quant_specs.input_ranges.push_back({-6.0, 6.0});
   }
   // quant_specs.default_ranges = {-6.0, 6.0};
   mlir::PassManager pm(&context);
-  tensorflow::AddTFToLCETFLConversionPasses(quant_specs, &pm);
+  mlir::TFL::PassConfig pass_config(quant_specs);
+  pass_config.emit_builtin_tflite_ops = true;
+  pass_config.lower_tensor_list_ops = true;
+  // tensorflow::AddTFToLCETFLConversionPasses(quant_specs, &pm);
+  tensorflow::AddTFToTFLConversionPasses(pass_config, &pm);
 
   // Convert back to outlined while format for export back to flatbuffer.
   pm.addPass(mlir::TFL::CreateWhileOutlinePass());

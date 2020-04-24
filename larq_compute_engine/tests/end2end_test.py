@@ -104,6 +104,17 @@ def quant_toy(**kwargs):
     return q_aware_model
 
 
+def quant_fcnn(**kwargs):
+    fcnn = tf.keras.Sequential(
+        [
+            tf.keras.layers.InputLayer(input_shape=(28)),
+            tf.keras.layers.Dense(10, activation=tf.nn.relu),
+            tf.keras.layers.Dense(10, activation=tf.nn.softmax),
+        ]
+    )
+    return tfmot.quantization.keras.quantize_model(fcnn)
+
+
 def feathernet(**kwargs):
     with tfmot.quantization.keras.quantize_scope():
         return tf.keras.models.load_model("/tmp/feathernet_quantized.h5")
@@ -120,7 +131,7 @@ def test_simple_model(model_cls):
     model = model_cls(weights=None)
     model_lce = convert_keras_model(model)
 
-    with open("/tmp/testmodel.tflite", "wb") as f:
+    with open("/tmp/testfcnn.tflite", "wb") as f:
         f.write(model_lce)
 
     # # Test on the flowers dataset

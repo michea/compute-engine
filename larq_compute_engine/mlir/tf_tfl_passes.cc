@@ -25,6 +25,12 @@ void AddTFToLCETFLConversionPasses(
   pass_manager->addPass(mlir::CreateTFExecutorToControlDialectConversion());
   pass_manager->addPass(mlir::TFControlFlow::CreateRaiseTFControlFlowPass());
 
+  if (!quant_specs.serialized_quant_stats.empty()) {
+    pass_manager->addPass(
+        mlir::quant::CreateImportQuantStatsPassForTFControlDialect(
+            quant_specs.serialized_quant_stats));
+  }
+
   // The conversion pipeline has to follow the following orders:
   // 1) Saved model related optimization like decompose resource ops
   // 2) Convert composite functions like lstm/rnns, along with proper function
