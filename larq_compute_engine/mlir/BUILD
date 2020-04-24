@@ -64,12 +64,6 @@ cc_library(
     ],
     deps = [
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow",
-        "@llvm-project//mlir:QuantOps",
-        "@llvm-project//mlir:AllPassesAndDialects",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tensorflow_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_quantize",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite",
     ],
     alwayslink = 1,
 )
@@ -125,15 +119,6 @@ cc_library(
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_optimize",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:decode_constant_pass",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tensorflow_passes",
-        "@llvm-project//mlir:QuantOps",
-        "@llvm-project//mlir:AllPassesAndDialects",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_quantize",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tensorflow_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_cl_options",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_lib",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_tf_dialect_op",
     ],
 )
 
@@ -153,24 +138,14 @@ pybind_extension(
     module_name = "graphdef_tfl_flatbuffer",
     deps = [
         ":lce_tfl_passes",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tf_tfl_passes",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:flatbuffer_export",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:convert_graphdef",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:import_utils",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:mlir_roundtrip_flags",
         "@org_tensorflow//tensorflow/core:ops",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_quantize",
         "@org_tensorflow//tensorflow/compiler/mlir/lite:tf_to_tfl_flatbuffer", # THIS LINE MADE EVERYTHING WORK
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tensorflow_lite_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tensorflow_dialect_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_cl_options",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_lib",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_registration",
-        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:translate_tf_dialect_op",
         "@pybind11",
-        "@llvm-project//mlir:QuantOps",
-        "@llvm-project//mlir:AllPassesAndDialects",
     ],
 )
 
