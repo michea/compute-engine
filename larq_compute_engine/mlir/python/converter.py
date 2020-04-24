@@ -73,19 +73,10 @@ def convert_keras_model(model: tf.keras.Model) -> bytes:
             "tf.enable_eager_execution() when using TensorFlow 1.x"
         )
     func = concrete_function_from_keras_model(model)
-    from tensorflow.python.framework import convert_to_constants
-
-    (
-        frozen_func,
-        graph_def,
-    ) = convert_to_constants.convert_variables_to_constants_v2_as_graph(
-        func, lower_control_flow=False
-    )
-
-    # if version.parse(tf.__version__) >= version.parse("1.15"):
-    #     frozen_func = convert_variables_to_constants_v2(func, lower_control_flow=False)
-    # else:
-    #     frozen_func = convert_variables_to_constants_v2(func)
+    if version.parse(tf.__version__) >= version.parse("1.15"):
+        frozen_func = convert_variables_to_constants_v2(func, lower_control_flow=False)
+    else:
+        frozen_func = convert_variables_to_constants_v2(func)
     input_tensors = [
         tensor for tensor in frozen_func.inputs if tensor.dtype != tf.dtypes.resource
     ]
