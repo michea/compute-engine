@@ -25,12 +25,6 @@ void AddTFToLCETFLConversionPasses(
   pass_manager->addPass(mlir::CreateTFExecutorToControlDialectConversion());
   pass_manager->addPass(mlir::TFControlFlow::CreateRaiseTFControlFlowPass());
 
-  if (!quant_specs.serialized_quant_stats.empty()) {
-    pass_manager->addPass(
-        mlir::quant::CreateImportQuantStatsPassForTFControlDialect(
-            quant_specs.serialized_quant_stats));
-  }
-
   // The conversion pipeline has to follow the following orders:
   // 1) Saved model related optimization like decompose resource ops
   // 2) Convert composite functions like lstm/rnns, along with proper function
@@ -70,8 +64,7 @@ void AddTFToLCETFLConversionPasses(
   // after the legalize below, for now it needs to be below the above passes
   // that work on TF dialect and before inliner so that the function calls in
   // body and cond are inlined for optimization.
-  pass_manager->addNestedPass<mlir::FuncOp>(
-      mlir::TFL::CreateLegalizeTFWhilePass());
+  pass_manager->addPass(mlir::TFL::CreateLegalizeTFWhilePass());
 
   // Add function inlining pass. Both TF and TFLite dialects are opted into
   // function inliner interface.
