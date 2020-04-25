@@ -144,8 +144,9 @@ pybind_extension(
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:import_utils",
         "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:mlir_roundtrip_flags",
         "@org_tensorflow//tensorflow/core:ops",
-        "@org_tensorflow//tensorflow/compiler/mlir/lite:tf_to_tfl_flatbuffer", # THIS LINE MADE EVERYTHING WORK
         "@pybind11",
+        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tf_dialect_lib",
+        "@org_tensorflow//tensorflow/compiler/mlir/tensorflow:tf_dialect_passes",
     ],
 )
 
